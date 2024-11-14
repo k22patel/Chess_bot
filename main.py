@@ -89,6 +89,9 @@ black_sprites = [black_rook, black_knight, black_bishop, black_queen, black_king
                  black_rook, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn, black_pawn,
                  black_pawn]
 
+white_castling = True
+black_castling = True
+
 
 # Function to draw the board after each move
 def draw():
@@ -133,56 +136,127 @@ def get_valid_white():
         if piece == 'pawn':
             if white_loc[ind][0] == 6:
                 if (5, white_loc[ind][1]) not in white_loc and (5, white_loc[ind][1]) not in black_loc:
-                    out.append((white_loc[ind], (5, white_loc[ind][1])))
+
+                    w_loc = white_loc.copy()
+                    w_loc[ind] = (5, white_loc[ind][1])
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (5, white_loc[ind][1])))
+
                     if (4, white_loc[ind][1]) not in white_loc and (4, white_loc[ind][1]) not in black_loc:
-                        out.append((white_loc[ind], (4, white_loc[ind][1])))
+                        w_loc[ind] = (4, white_loc[ind][1])
+                        if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                            out.append((white_loc[ind], (4, white_loc[ind][1])))
 
             elif (white_loc[ind][0] - 1, white_loc[ind][1]) not in white_loc and \
                     (white_loc[ind][0] - 1, white_loc[ind][1]) not in black_loc:
-                out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1])))
+                w_loc = white_loc.copy()
+                w_loc[ind] = (white_loc[ind][0] - 1, white_loc[ind][1])
+                if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1])))
 
             if (white_loc[ind][0] - 1, white_loc[ind][1] + 1) in black_loc:
-                out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1] + 1)))
+                w_loc = white_loc.copy()
+                w_loc[ind] = (white_loc[ind][0] - 1, white_loc[ind][1] + 1)
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+                temp_ind = b_loc.index((white_loc[ind][0] - 1, white_loc[ind][1] + 1))
+                del b_loc[temp_ind]
+                del b_pieces[temp_ind]
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1] + 1)))
 
             if (white_loc[ind][0] - 1, white_loc[ind][1] - 1) in black_loc:
-                out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1] - 1)))
+                w_loc = white_loc.copy()
+                w_loc[ind] = (white_loc[ind][0] - 1, white_loc[ind][1] - 1)
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+                temp_ind = b_loc.index((white_loc[ind][0] - 1, white_loc[ind][1] - 1))
+                del b_loc[temp_ind]
+                del b_pieces[temp_ind]
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (white_loc[ind][0] - 1, white_loc[ind][1] - 1)))
 
         elif piece == 'rook':
             r_row = white_loc[ind][0]
             r_col = white_loc[ind][1]
 
             for i in range(r_row + 1, 8):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (i, r_col) not in white_loc and (i, r_col) not in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                 elif (i, r_col) in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    temp_ind = b_loc.index((i, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                     break
                 elif (i, r_col) in white_loc:
                     break
 
             for i in range(r_row - 1, -1, -1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (i, r_col) not in white_loc and (i, r_col) not in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                 elif (i, r_col) in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    temp_ind = b_loc.index((i, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                     break
                 elif (i, r_col) in white_loc:
                     break
 
             for i in range(r_col + 1, 8):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row, i) not in white_loc and (r_row, i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                 elif (r_row, i) in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    temp_ind = b_loc.index((r_row, i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                     break
+
                 elif (r_row, i) in white_loc:
                     break
 
             for i in range(r_col - 1, -1, -1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row, i) not in white_loc and (r_row, i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                 elif (r_row, i) in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    temp_ind = b_loc.index((r_row, i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                     break
                 elif (r_row, i) in white_loc:
                     break
@@ -191,43 +265,81 @@ def get_valid_white():
             r_row = white_loc[ind][0]
             r_col = white_loc[ind][1]
 
-            tr = min(r_row, 7-r_col)
+            tr = min(r_row, 7 - r_col)
             tl = min(r_row, r_col)
-            bl = min(7-r_row, r_col)
-            br = min(7-r_row, 7-r_col)
+            bl = min(7 - r_row, r_col)
+            br = min(7 - r_row, 7 - r_col)
 
-            for i in range(1, tr+1):
+            for i in range(1, tr + 1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row - i, r_col + i) not in white_loc and (r_row - i, r_col + i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col + i)))
+                    w_loc[ind] = (r_row - i, r_col + i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col + i)))
                 elif (r_row - i, r_col + i) in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col + i)))
+                    w_loc[ind] = (r_row - i, r_col + i)
+                    temp_ind = b_loc.index((r_row - i, r_col + i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col + i)))
                     break
                 elif (r_row - i, r_col + i) in white_loc:
                     break
 
-            for i in range(1, tl+1):
+            for i in range(1, tl + 1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row - i, r_col - i) not in white_loc and (r_row - i, r_col - i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col - i)))
+                    w_loc[ind] = (r_row - i, r_col - i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col - i)))
                 elif (r_row - i, r_col - i) in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col - i)))
+                    w_loc[ind] = (r_row - i, r_col - i)
+                    temp_ind = b_loc.index((r_row - i, r_col - i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col - i)))
                     break
                 elif (r_row - i, r_col - i) in white_loc:
                     break
 
-            for i in range(1, bl+1):
+            for i in range(1, bl + 1):
                 if (r_row + i, r_col - i) not in white_loc and (r_row + i, r_col - i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col - i)))
+                    w_loc[ind] = (r_row + i, r_col - i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col - i)))
                 elif (r_row + i, r_col - i) in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col - i)))
+                    w_loc[ind] = (r_row + i, r_col - i)
+
+                    temp_ind = b_loc.index((r_row + i, r_col - i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col - i)))
                     break
                 elif (r_row + i, r_col - i) in white_loc:
                     break
 
-            for i in range(1, br+1):
+            for i in range(1, br + 1):
                 if (r_row + i, r_col + i) not in white_loc and (r_row + i, r_col + i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col + i)))
+                    w_loc[ind] = (r_row + i, r_col + i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col + i)))
                 elif (r_row + i, r_col + i) in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col + i)))
+                    w_loc[ind] = (r_row + i, r_col + i)
+
+                    temp_ind = b_loc.index((r_row + i, r_col + i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col + i)))
                     break
                 elif (r_row + i, r_col + i) in white_loc:
                     break
@@ -236,119 +348,281 @@ def get_valid_white():
             r_row = white_loc[ind][0]
             r_col = white_loc[ind][1]
 
-            tl = min(r_row, r_col)
-            bl = min(7-r_row, r_col)
-            br = min(7-r_row, 7-r_col)
-
-            if r_row > 1 and 7-r_col > 0:
+            if r_row > 1 and 7 - r_col > 0:
                 if (r_row - 2, r_col + 1) not in white_loc:
-                    out.append((white_loc[ind], (r_row - 2, r_col + 1)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+                    w_loc[ind] = (r_row - 2, r_col + 1)
+                    if (r_row - 2, r_col + 1) in b_loc:
+                        temp_ind = b_loc.index((r_row - 2, r_col + 1))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
 
-            if r_row > 0 and 7-r_col > 1:
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row - 2, r_col + 1)))
+
+            if r_row > 0 and 7 - r_col > 1:
                 if (r_row - 1, r_col + 2) not in white_loc:
-                    out.append((white_loc[ind], (r_row - 1, r_col + 2)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+                    w_loc[ind] = (r_row - 1, r_col + 2)
+                    if (r_row - 1, r_col + 2) in b_loc:
+                        temp_ind = b_loc.index((r_row - 1, r_col + 2))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
+
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row - 1, r_col + 2)))
 
             if r_row > 0 and r_col > 1:
                 if (r_row - 1, r_col - 2) not in white_loc:
-                    out.append((white_loc[ind], (r_row - 1, r_col - 2)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+                    w_loc[ind] = (r_row - 1, r_col - 2)
+                    if (r_row - 1, r_col - 2) in b_loc:
+                        temp_ind = b_loc.index((r_row - 1, r_col - 2))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
+
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row - 1, r_col - 2)))
 
             if r_row > 1 and r_col > 0:
                 if (r_row - 2, r_col - 1) not in white_loc:
-                    out.append((white_loc[ind], (r_row - 2, r_col - 1)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+                    w_loc[ind] = (r_row - 2, r_col - 1)
+                    if (r_row - 2, r_col - 1) in b_loc:
+                        temp_ind = b_loc.index((r_row - 2, r_col - 1))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
 
-            if 7 - r_row > 1 and 7-r_col > 0:
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row - 2, r_col - 1)))
+
+            if 7 - r_row > 1 and 7 - r_col > 0:
                 if (r_row + 2, r_col + 1) not in white_loc:
-                    out.append((white_loc[ind], (r_row + 2, r_col + 1)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+                    w_loc[ind] = (r_row + 2, r_col + 1)
+                    if (r_row + 2, r_col + 1) in b_loc:
+                        temp_ind = b_loc.index((r_row + 2, r_col + 1))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
 
-            if 7 - r_row > 0 and 7-r_col > 1:
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row + 2, r_col + 1)))
+
+            if 7 - r_row > 0 and 7 - r_col > 1:
                 if (r_row + 1, r_col + 2) not in white_loc:
-                    out.append((white_loc[ind], (r_row + 1, r_col + 2)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+
+                    w_loc[ind] = (r_row + 1, r_col + 2)
+                    if (r_row + 1, r_col + 2) in b_loc:
+                        temp_ind = b_loc.index((r_row + 1, r_col + 2))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
+
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row + 1, r_col + 2)))
 
             if 7 - r_row > 0 and r_col > 1:
                 if (r_row + 1, r_col - 2) not in white_loc:
-                    out.append((white_loc[ind], (r_row + 1, r_col - 2)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+
+                    w_loc[ind] = (r_row + 1, r_col - 2)
+                    if (r_row + 1, r_col - 2) in b_loc:
+                        temp_ind = b_loc.index((r_row + 1, r_col - 2))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
+
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row + 1, r_col - 2)))
 
             if 7 - r_row > 1 and r_col > 0:
                 if (r_row + 2, r_col - 1) not in white_loc:
-                    out.append((white_loc[ind], (r_row + 2, r_col - 1)))
+                    w_loc = white_loc.copy()
+                    b_loc = black_loc.copy()
+                    b_pieces = black_pieces.copy()
+
+                    w_loc[ind] = (r_row + 2, r_col - 1)
+                    if (r_row + 2, r_col - 1) in b_loc:
+                        temp_ind = b_loc.index((r_row + 2, r_col - 1))
+                        del b_loc[temp_ind]
+                        del b_pieces[temp_ind]
+
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append((white_loc[ind], (r_row + 2, r_col - 1)))
 
         elif piece == 'queen':
             r_row = white_loc[ind][0]
             r_col = white_loc[ind][1]
 
-            tr = min(r_row, 7-r_col)
+            tr = min(r_row, 7 - r_col)
             tl = min(r_row, r_col)
-            bl = min(7-r_row, r_col)
-            br = min(7-r_row, 7-r_col)
+            bl = min(7 - r_row, r_col)
+            br = min(7 - r_row, 7 - r_col)
 
-            for i in range(1, tr+1):
+            for i in range(1, tr + 1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row - i, r_col + i) not in white_loc and (r_row - i, r_col + i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col + i)))
+                    w_loc[ind] = (r_row - i, r_col + i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col + i)))
                 elif (r_row - i, r_col + i) in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col + i)))
+                    w_loc[ind] = (r_row - i, r_col + i)
+                    temp_ind = b_loc.index((r_row - i, r_col + i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col + i)))
                     break
                 elif (r_row - i, r_col + i) in white_loc:
                     break
 
-            for i in range(1, tl+1):
+            for i in range(1, tl + 1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row - i, r_col - i) not in white_loc and (r_row - i, r_col - i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col - i)))
+                    w_loc[ind] = (r_row - i, r_col - i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col - i)))
                 elif (r_row - i, r_col - i) in black_loc:
-                    out.append(((r_row, r_col), (r_row - i, r_col - i)))
+                    w_loc[ind] = (r_row - i, r_col - i)
+                    temp_ind = b_loc.index((r_row - i, r_col - i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row - i, r_col - i)))
                     break
                 elif (r_row - i, r_col - i) in white_loc:
                     break
 
-            for i in range(1, bl+1):
+            for i in range(1, bl + 1):
                 if (r_row + i, r_col - i) not in white_loc and (r_row + i, r_col - i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col - i)))
+                    w_loc[ind] = (r_row + i, r_col - i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col - i)))
                 elif (r_row + i, r_col - i) in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col - i)))
+                    w_loc[ind] = (r_row + i, r_col - i)
+
+                    temp_ind = b_loc.index((r_row + i, r_col - i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col - i)))
                     break
                 elif (r_row + i, r_col - i) in white_loc:
                     break
 
-            for i in range(1, br+1):
+            for i in range(1, br + 1):
                 if (r_row + i, r_col + i) not in white_loc and (r_row + i, r_col + i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col + i)))
+                    w_loc[ind] = (r_row + i, r_col + i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col + i)))
                 elif (r_row + i, r_col + i) in black_loc:
-                    out.append(((r_row, r_col), (r_row + i, r_col + i)))
+                    w_loc[ind] = (r_row + i, r_col + i)
+
+                    temp_ind = b_loc.index((r_row + i, r_col + i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row + i, r_col + i)))
                     break
                 elif (r_row + i, r_col + i) in white_loc:
                     break
 
             for i in range(r_row + 1, 8):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (i, r_col) not in white_loc and (i, r_col) not in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                 elif (i, r_col) in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    temp_ind = b_loc.index((i, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                     break
                 elif (i, r_col) in white_loc:
                     break
 
             for i in range(r_row - 1, -1, -1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (i, r_col) not in white_loc and (i, r_col) not in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                 elif (i, r_col) in black_loc:
-                    out.append(((r_row, r_col), (i, r_col)))
+                    w_loc[ind] = (i, r_col)
+                    temp_ind = b_loc.index((i, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (i, r_col)))
                     break
                 elif (i, r_col) in white_loc:
                     break
 
             for i in range(r_col + 1, 8):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row, i) not in white_loc and (r_row, i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                 elif (r_row, i) in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    temp_ind = b_loc.index((r_row, i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                     break
+
                 elif (r_row, i) in white_loc:
                     break
 
             for i in range(r_col - 1, -1, -1):
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
                 if (r_row, i) not in white_loc and (r_row, i) not in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    if not is_check(black_loc, black_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                 elif (r_row, i) in black_loc:
-                    out.append(((r_row, r_col), (r_row, i)))
+                    w_loc[ind] = (r_row, i)
+                    temp_ind = b_loc.index((r_row, i))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        out.append(((r_row, r_col), (r_row, i)))
                     break
                 elif (r_row, i) in white_loc:
                     break
@@ -358,35 +632,302 @@ def get_valid_white():
             r_col = white_loc[ind][1]
 
             if 7 - r_row > 0 and 7 - r_col > 0 and (r_row + 1, r_col + 1) not in white_loc:
-                out.append((white_loc[ind], (r_row + 1, r_col + 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row + 1, r_col + 1) in black_loc:
+                    temp_ind = b_loc.index((r_row + 1, r_col + 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row + 1, r_col + 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append(((r_row, r_col), (r_row + 1, r_col + 1)))
 
             if r_row > 0 and 7 - r_col > 0 and (r_row - 1, r_col + 1) not in white_loc:
-                out.append((white_loc[ind], (r_row - 1, r_col + 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row - 1, r_col + 1) in black_loc:
+                    temp_ind = b_loc.index((r_row - 1, r_col + 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row - 1, r_col + 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row - 1, r_col + 1)))
 
             if r_row > 0 and r_col > 0 and (r_row - 1, r_col - 1) not in white_loc:
-                out.append((white_loc[ind], (r_row - 1, r_col - 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row - 1, r_col - 1) in black_loc:
+                    temp_ind = b_loc.index((r_row - 1, r_col - 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row - 1, r_col - 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row - 1, r_col - 1)))
 
             if 7 - r_row > 0 and r_col > 0 and (r_row + 1, r_col - 1) not in white_loc:
-                out.append((white_loc[ind], (r_row + 1, r_col - 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row + 1, r_col - 1) in black_loc:
+                    temp_ind = b_loc.index((r_row + 1, r_col - 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row + 1, r_col - 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row + 1, r_col - 1)))
 
             if 7 - r_row > 0 and (r_row + 1, r_col) not in white_loc:
-                out.append((white_loc[ind], (r_row + 1, r_col)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row + 1, r_col) in black_loc:
+                    temp_ind = b_loc.index((r_row + 1, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row + 1, r_col)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row + 1, r_col)))
 
             if r_row > 0 and (r_row - 1, r_col) not in white_loc:
-                out.append((white_loc[ind], (r_row - 1, r_col)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row - 1, r_col) in black_loc:
+                    temp_ind = b_loc.index((r_row - 1, r_col))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                w_loc[ind] = (r_row - 1, r_col)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row - 1, r_col)))
 
             if r_col > 0 and (r_row, r_col - 1) not in white_loc:
-                out.append((white_loc[ind], (r_row, r_col - 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row, r_col - 1) in black_loc:
+                    temp_ind = b_loc.index((r_row, r_col - 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                elif white_castling:
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        w_loc[ind] = (r_row, r_col - 1)
+                        print('1')
+                        if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                            w_loc[ind] = (r_row, r_col - 2)
+                            print('2')
+                            if (r_row, r_col - 2) not in white_loc and (r_row, r_col - 2) not in black_loc and \
+                                    not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                                print('3')
+                                if (r_row, r_col - 3) not in black_loc and (r_row, r_col - 3) not in white_loc:
+                                    out.append((white_loc[ind], (r_row, r_col - 2)))
+                                    print('4')
+
+                w_loc[ind] = (r_row, r_col - 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row, r_col - 1)))
 
             if 7 - r_col > 0 and (r_row, r_col + 1) not in white_loc:
-                out.append((white_loc[ind], (r_row, r_col + 1)))
+                w_loc = white_loc.copy()
+                b_loc = black_loc.copy()
+                b_pieces = black_pieces.copy()
+
+                if (r_row, r_col + 1) in black_loc:
+                    temp_ind = b_loc.index((r_row, r_col + 1))
+                    del b_loc[temp_ind]
+                    del b_pieces[temp_ind]
+
+                elif white_castling:
+                    if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                        w_loc[ind] = (r_row, r_col + 1)
+                        if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                            w_loc[ind] = (r_row, r_col + 2)
+                            if (r_row, r_col + 2) not in white_loc and (r_row, r_col + 2) not in black_loc and \
+                                    not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                                out.append((white_loc[ind], (r_row, r_col + 2)))
+
+                w_loc[ind] = (r_row, r_col + 1)
+                if not is_check(b_loc, b_pieces, w_loc, white_pieces):
+                    out.append((white_loc[ind], (r_row, r_col + 1)))
 
     return out
 
 
-def is_check(white_temp):
+def is_check(b_loc, b_pieces, w_loc, w_pieces):
+    king_ind = w_pieces.index('king')
+    king_loc = w_loc[king_ind]
 
-    return True
+    r_row = king_loc[0]
+    r_col = king_loc[1]
+
+    tr = min(r_row, 7 - r_col)
+    tl = min(r_row, r_col)
+    bl = min(7 - r_row, r_col)
+    br = min(7 - r_row, 7 - r_col)
+
+    for i in range(1, tr + 1):
+        if (r_row - i, r_col + i) not in w_loc and (r_row - i, r_col + i) not in b_loc:
+            continue
+        elif (r_row - i, r_col + i) in b_loc:
+            ind = b_loc.index((r_row - i, r_col + i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'bishop':
+                return True
+            break
+        elif (r_row - i, r_col + i) in w_loc:
+            break
+
+    for i in range(1, tl + 1):
+        if (r_row - i, r_col - i) not in w_loc and (r_row - i, r_col - i) not in b_loc:
+            continue
+        elif (r_row - i, r_col - i) in b_loc:
+            ind = b_loc.index((r_row - i, r_col - i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'bishop':
+                return True
+            break
+        elif (r_row - i, r_col - i) in w_loc:
+            break
+
+    for i in range(1, bl + 1):
+        if (r_row + i, r_col - i) not in w_loc and (r_row + i, r_col - i) not in b_loc:
+            continue
+        elif (r_row + i, r_col - i) in b_loc:
+            ind = b_loc.index((r_row + i, r_col - i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'bishop':
+                return True
+            break
+        elif (r_row + i, r_col - i) in w_loc:
+            break
+
+    for i in range(1, br + 1):
+        if (r_row + i, r_col + i) not in w_loc and (r_row + i, r_col + i) not in b_loc:
+            continue
+        elif (r_row + i, r_col + i) in b_loc:
+            ind = b_loc.index((r_row + i, r_col + i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'bishop':
+                return True
+            break
+        elif (r_row + i, r_col + i) in w_loc:
+            break
+
+    for i in range(r_row + 1, 8):
+        if (i, r_col) not in w_loc and (i, r_col) not in b_loc:
+            continue
+        elif (i, r_col) in b_loc:
+            ind = b_loc.index((i, r_col))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'rook':
+                return True
+            break
+        elif (i, r_col) in w_loc:
+            break
+
+    for i in range(r_row - 1, -1, -1):
+        if (i, r_col) not in w_loc and (i, r_col) not in b_loc:
+            continue
+        elif (i, r_col) in b_loc:
+            ind = b_loc.index((i, r_col))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'rook':
+                return True
+            break
+        elif (i, r_col) in w_loc:
+            break
+
+    for i in range(r_col + 1, 8):
+        if (r_row, i) not in w_loc and (r_row, i) not in b_loc:
+            continue
+        elif (r_row, i) in b_loc:
+            ind = b_loc.index((r_row, i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'rook':
+                return True
+            break
+        elif (r_row, i) in w_loc:
+            break
+
+    for i in range(r_col - 1, -1, -1):
+        if (r_row, i) not in w_loc and (r_row, i) not in b_loc:
+            continue
+        elif (r_row, i) in b_loc:
+            ind = b_loc.index((r_row, i))
+            if b_pieces[ind] == 'queen' or b_pieces[ind] == 'rook':
+                return True
+            break
+        elif (r_row, i) in w_loc:
+            break
+
+    if r_row > 1 and 7 - r_col > 0:
+        if (r_row - 2, r_col + 1) in b_loc:
+            ind = b_loc.index((r_row - 2, r_col + 1))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if r_row > 0 and 7 - r_col > 1:
+        if (r_row - 1, r_col + 2) in b_loc:
+            ind = b_loc.index((r_row - 1, r_col + 2))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if r_row > 0 and r_col > 1:
+        if (r_row - 1, r_col - 2) in b_loc:
+            ind = b_loc.index((r_row - 1, r_col - 2))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if r_row > 1 and r_col > 0:
+        if (r_row - 2, r_col - 1) in b_loc:
+            ind = b_loc.index((r_row - 2, r_col - 1))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if 7 - r_row > 1 and 7 - r_col > 0:
+        if (r_row + 2, r_col + 1) in b_loc:
+            ind = b_loc.index((r_row + 2, r_col + 1))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if 7 - r_row > 0 and 7 - r_col > 1:
+        if (r_row + 1, r_col + 2) in b_loc:
+            ind = b_loc.index((r_row + 1, r_col + 2))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if 7 - r_row > 0 and r_col > 1:
+        if (r_row + 1, r_col - 2) in b_loc:
+            ind = b_loc.index((r_row + 1, r_col - 2))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if 7 - r_row > 1 and r_col > 0:
+        if (r_row + 2, r_col - 1) in b_loc:
+            ind = b_loc.index((r_row + 1, r_col - 2))
+            if b_pieces[ind] == 'knight':
+                return True
+
+    if (r_row - 1, r_col + 1) in b_loc:
+        ind = b_loc.index((r_row - 1, r_col + 1))
+        if b_pieces[ind] == 'pawn':
+            return True
+
+    if (r_row - 1, r_col - 1) in b_loc:
+        ind = b_loc.index((r_row - 1, r_col - 1))
+        if b_pieces[ind] == 'pawn':
+            return True
+
+    return False
 
 
 # Loop while playing
@@ -413,6 +954,7 @@ while play:
 
                 cur_piece = loc
                 valid_moves = get_valid_white()
+
             # if the next click is not a white piece then move the prev white piece there
             elif step == 1 and loc not in white_loc and 0 <= loc[0] < 8 and 0 <= loc[1] < 8:
 
@@ -423,10 +965,23 @@ while play:
                     index = white_loc.index(cur_piece)
                     white_loc[index] = loc
                     if loc in black_loc:
-                        index = black_loc.index(loc)
-                        del black_sprites[index]
-                        del black_pieces[index]
+                        ind = black_loc.index(loc)
+                        del black_sprites[ind]
+                        del black_pieces[ind]
                         black_loc.remove(loc)
+
+                    if white_pieces[index] == 'pawn' and white_loc[index][0] == 0:
+                        white_sprites[index] = white_queen
+                        white_pieces[index] = 'queen'
+                    elif white_pieces[index] == 'king' and white_castling == True and loc == (7, 6):
+                        rook = white_loc.index((7, 7))
+                        white_loc[rook] = (7, 5)
+                        white_castling = False
+
+                    elif white_pieces[index] == 'king' and white_castling == True and loc == (7, 2):
+                        rook = white_loc.index((7, 0))
+                        white_loc[rook] = (7, 3)
+                        white_castling = False
 
                     draw()
                     pygame.draw.rect(surface, (0, 0, 0),
@@ -447,13 +1002,27 @@ while play:
                 index = black_loc.index(cur_piece)
                 black_loc[index] = loc
                 if loc in white_loc:
-                    index = white_loc.index(loc)
-                    del white_sprites[index]
-                    del white_pieces[index]
+                    ind = white_loc.index(loc)
+                    del white_sprites[ind]
+                    del white_pieces[ind]
                     white_loc.remove(loc)
+
+                if black_pieces[index] == 'pawn' and black_loc[index][0] == 7:
+                    black_sprites[index] = black_queen
+                    black_pieces[index] = 'queen'
+                    print('Success')
+
                 draw()
                 pygame.draw.rect(surface, (0, 0, 0),
                                  [col * 80, row * 80, 80, 80], 3)
+                check = is_check(black_loc, black_pieces, white_loc, white_pieces)
+                valid_moves = get_valid_white()
+
+                if check and not valid_moves:
+                    print('CHECK MATE')
+                elif check:
+                    print("CHECK!")
+
     # Update display after event
     pygame.display.flip()
 # quit game once exited out of while loop
